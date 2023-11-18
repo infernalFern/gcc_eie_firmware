@@ -1,7 +1,4 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
@@ -16,7 +13,8 @@
             "showDevDebugOutput": "none",
             "servertype": "jlink",
             "svdPath": "${workspaceFolder}/firmware_common/bsp/ATSAM3U2C.svd",
-            "preLaunchTask": "Build firmware"
+            "preLaunchTask": "Build firmware",
+            "gdbPath": "gdb-multiarch.exe"
         },
         {
             "name": "waf",

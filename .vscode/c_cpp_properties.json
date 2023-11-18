@@ -1,5 +1,26 @@
 {
     "configurations": [
+      {
+        "name": "windows-gcc-x64",
+        "includePath": [
+          "${workspaceFolder}/**"
+        ],
+        "defines": [],
+        "cStandard": "${default}",
+        "intelliSenseMode": "windows-gcc-x64",
+        "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+        "mergeConfigurations": true,
+        "cppStandard": "${default}",
+        "compilerPath": "C:/msys64/mingw64/bin/gcc.exe"
+      }
+    ],
+    "version": 4
+  }
+
+
+
+/*{
+    "configurations": [
         {
             "name": "default",
             "includePath": [],
@@ -11,4 +32,4 @@
         }
     ],
     "version": 4
-}
+}*/
