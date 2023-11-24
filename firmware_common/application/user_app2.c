@@ -96,9 +96,10 @@ Promises:
 */
 void UserApp2Initialize(void)
 {
-#if 0
+#if 1
 	memset(au8UserInputBuffer, 0, sizeof(u8) * USER_INPUT_BUFFER_SIZE);
 	memset(au8ConsumedCharacterArray, 0, sizeof(u8) * USER_INPUT_BUFFER_SIZE);
+	DebugSetPassthrough();
 #endif
 	/* If good initialization, set state to Idle */
 	if( 1 )
@@ -156,13 +157,13 @@ State Machine Function Definitions
 
 static void UserApp2SM_Idle(void)
 {
-#if 0
+#if 1
 	//Part 1 of Module Exercise.
 	static u8 au8NameConstant[] = "Some Name";
 	static u8 u8NameCount = 0;
 	static u8 u8NumberNameMatches;
 	
-	DebugSetPassthrough();
+	
 
 	u8 u8CharacterInputCount = DebugScanf(au8UserInputBuffer);
 
@@ -212,11 +213,12 @@ static void UserApp2SM_Idle(void)
 		u8 u8CopyOfNameCount = u8NameCount;
 		u8 u8NumberOfDigits = 0;
 		
-		while (u8CopyOfNameCount /= 10 != 0) {
+		while ((u8CopyOfNameCount /= 10) != 0) {
 			u8NumberOfDigits++;
 		}
 
 		// create the printed pattern.
+		DebugLineFeed();
 		for (u8 i = 0; i <= u8NumberOfDigits + 2; i++) { // may wish to change to +1
 			DebugPrintf("*");
 		}

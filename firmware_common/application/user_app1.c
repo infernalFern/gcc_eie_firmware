@@ -95,8 +95,9 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+#if 0
 	memset(au8User1Buffer, 0, sizeof(u8) * USER1_INPUT_BUFFER_SIZE);
-
+#endif
 	/* If good initialization, set state to Idle */
 	if( 1 )
 	{
@@ -145,6 +146,7 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
+#if 0
 	static u8 au8NumberCharactersMessage[] = "\n\rCharacters in Buffer: ";
 	static u8 au8ScanfBufferMessage[] = "\n\rContents of Buffer: ";
 	
@@ -168,6 +170,7 @@ static void UserApp1SM_Idle(void)
 		DebugPrintf(au8User1Buffer);
 		DebugLineFeed();
 	}
+#endif
 		
 } /* end UserApp1SM_Idle() */
 
