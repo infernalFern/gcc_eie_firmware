@@ -54,12 +54,15 @@ extern volatile u32 G_u32SystemTime1s;                    /*!< @brief From main.
 extern volatile u32 G_u32SystemFlags;                     /*!< @brief From main.c */
 extern volatile u32 G_u32ApplicationFlags;                /*!< @brief From main.c */
 
-
+extern u8 G_au8DebugScanfBuffer[]; // maximum value is DEBUG_SCANF_BUFFER_SIZE
+extern u8 G_u8DebugScanfCharCount;
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp1_<type>" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type UserApp1_pfStateMachine;               /*!< @brief The state machine function pointer */
+static u8 au8User1Buffer[USER1_INPUT_BUFFER_SIZE];          //character buffer
+
+static fnCode_type UserApp1_pfStateMachine;                 /*!< @brief The state machine function pointer */
 //static u32 UserApp1_u32Timeout;                           /*!< @brief Timeout counter used across states */
 
 
@@ -92,20 +95,22 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
-  /* If good initialization, set state to Idle */
-  if( 1 )
-  {
-    UserApp1_pfStateMachine = UserApp1SM_Idle;
-  }
-  else
-  {
-    /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp1_pfStateMachine = UserApp1SM_Error;
-  }
+	memset(au8User1Buffer, 0, sizeof(u8) * USER1_INPUT_BUFFER_SIZE);
+
+	/* If good initialization, set state to Idle */
+	if( 1 )
+	{
+		UserApp1_pfStateMachine = UserApp1SM_Idle;
+	}
+	else
+	{
+		/* The task isn't properly initialized, so shut it down and don't run */
+		UserApp1_pfStateMachine = UserApp1SM_Error;
+	}
 
 } /* end UserApp1Initialize() */
 
-  
+	
 /*!----------------------------------------------------------------------------------------------------------------------
 @fn void UserApp1RunActiveState(void)
 
@@ -123,7 +128,7 @@ Promises:
 */
 void UserApp1RunActiveState(void)
 {
-  UserApp1_pfStateMachine();
+	UserApp1_pfStateMachine();
 
 } /* end UserApp1RunActiveState */
 
@@ -140,15 +145,38 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
-    
+	static u8 au8NumberCharactersMessage[] = "\n\rCharacters in Buffer: ";
+	static u8 au8ScanfBufferMessage[] = "\n\rContents of Buffer: ";
+	
+	
+	if (WasButtonPressed(BUTTON0)) {
+		ButtonAcknowledge(BUTTON0);
+		DebugPrintf(au8NumberCharactersMessage);
+		DebugPrintNumber(G_u8DebugScanfCharCount);
+		DebugLineFeed();
+	}
+
+	if (WasButtonPressed(BUTTON1)) {
+		ButtonAcknowledge(BUTTON1);
+
+		//read buffer + add null character at end for safety purposes
+		u8 u8NumberCharactersRead = DebugScanf(au8User1Buffer);
+		au8User1Buffer[u8NumberCharactersRead] = '\0'; // required to add this line to handle the edge case in which the user does not
+													   // terminate a string by pressing Enter.
+		// print messages and then print the user input buffer.
+		DebugPrintf(au8ScanfBufferMessage);
+		DebugPrintf(au8User1Buffer);
+		DebugLineFeed();
+	}
+		
 } /* end UserApp1SM_Idle() */
-     
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void UserApp1SM_Error(void)          
 {
-  
+	
 } /* end UserApp1SM_Error() */
 
 
