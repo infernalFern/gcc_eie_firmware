@@ -1,47 +1,65 @@
 {
-    "version": "0.2.0",
-    "configurations": [
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "cwd": "${workspaceFolder}",
+      "executable": "./build/firmware-ascii",
+      "name": "firmware",
+      "request": "launch",
+      "type": "cortex-debug",
+      "device": "ATSAM3U2C",
+      "runToEntryPoint": "main",
+      "showDevDebugOutput": "none",
+      "servertype": "jlink",
+      "svdPath": "${workspaceFolder}/firmware_common/bsp/ATSAM3U2C.svd",
+      "preLaunchTask": "Build firmware",
+      "gdbPath": "gdb-multiarch.exe"
+    },
+    {
+      "name": "waf",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/waf",
+      "args": [
+        "${input:waf-command}"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/erasm/OneDrive/Documents/GitHub/EIE/gcc_eie_firmware/firmware_common/application",
+      "program": "c:/Users/erasm/OneDrive/Documents/GitHub/EIE/gcc_eie_firmware/firmware_common/application/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
         {
-            "cwd": "${workspaceFolder}",
-            "executable": "./build/firmware-ascii",
-            "name": "firmware",
-            "request": "launch",
-            "type": "cortex-debug",
-            "device": "ATSAM3U2C",
-            "runToEntryPoint": "main",
-            // "breakAfterReset": true,
-            "showDevDebugOutput": "none",
-            "servertype": "jlink",
-            "svdPath": "${workspaceFolder}/firmware_common/bsp/ATSAM3U2C.svd",
-            "preLaunchTask": "Build firmware",
-            "gdbPath": "gdb-multiarch.exe"
-        },
-        {
-            "name": "waf",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/waf",
-            "args": [
-                "${input:waf-command}",
-            ],
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
-            "justMyCode": false,
-        },
-    ],
-    "inputs": [
-        {
-            "id": "waf-command",
-            "type": "pickString",
-            "description": "Which waf subcommand to run",
-            "default": "build",
-            "options": [
-                "distclean",
-                "configure",
-                "clean",
-                "build",
-                "clean build",
-            ]
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
         }
-    ]
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "waf-command",
+      "type": "pickString",
+      "description": "Which waf subcommand to run",
+      "default": "build",
+      "options": [
+        "distclean",
+        "configure",
+        "clean",
+        "build",
+        "clean build"
+      ]
+    }
+  ]
 }
