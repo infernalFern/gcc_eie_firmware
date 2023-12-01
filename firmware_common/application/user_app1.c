@@ -59,6 +59,7 @@ extern volatile u32 G_u32ApplicationFlags;                /*!< @brief From main.
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp1_<type>" and be declared as static.
 ***********************************************************************************************************************/
+static u8 UserApp_au8Name[] = "Some Name";
 static fnCode_type UserApp1_pfStateMachine;               /*!< @brief The state machine function pointer */
 //static u32 UserApp1_u32Timeout;                           /*!< @brief Timeout counter used across states */
 
@@ -92,6 +93,25 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+	u8 au8Message[] = "Hello world!";
+	
+	//! @a Examples
+
+	// LcdMessage(LINE1_START_ADDR, au8Message);
+	// LcdClearChars(LINE1_START_ADDR + 13, 3);
+	LcdCommand(LCD_CLEAR_CMD);
+
+	//! @a Exercise 
+
+	LcdMessage(LINE1_START_ADDR, UserApp_au8Name);
+	LcdMessage(LINE2_START_ADDR, "0");
+	LcdMessage(LINE2_START_ADDR + 6, "1");
+	LcdMessage(LINE2_START_ADDR + 13, "2");
+	LcdMessage(LINE2_END_ADDR, "3");
+
+	//place the cursor at the home position.
+	LcdCommand(LCD_HOME_CMD); 
+
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -140,7 +160,23 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
-    
+
+	static bool bCursorOn = FALSE;
+
+	if (WasButtonPressed(BUTTON0)) {
+		ButtonAcknowledge(BUTTON0);
+
+		if (bCursorOn) {
+			//cursor is on and we wish to turn it off.
+			LcdCommand(LCD_DISPLAY_CMD | LCD_DISPLAY_ON);
+			bCursorOn = FALSE;
+		} else {
+			//cursor is off, and we wish to turn it on.
+			LcdCommand(LCD_DISPLAY_CMD | LCD_DISPLAY_ON | LCD_DISPLAY_CURSOR | LCD_DISPLAY_BLINK);
+			bCursorOn = TRUE;
+		} 
+	} 
+	
 } /* end UserApp1SM_Idle() */
      
 
