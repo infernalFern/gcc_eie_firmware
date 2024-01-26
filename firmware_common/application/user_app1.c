@@ -54,10 +54,10 @@ extern volatile u32 G_u32SystemTime1s;                    /*!< @brief From main.
 extern volatile u32 G_u32SystemFlags;                     /*!< @brief From main.c */
 extern volatile u32 G_u32ApplicationFlags;                /*!< @brief From main.c */
 
-extern u8 G_au8MessageOK[];                            /* From utilities.c */
-extern u8 G_au8MessageFAIL[];                          /* From utilities.c */
+// extern u8 G_au8MessageOK[];                            /* From utilities.c */
+// extern u8 G_au8MessageFAIL[];                          /* From utilities.c */
 
-extern u32 G_u32AntFlags;                              /* From ant.c */
+// extern u32 G_u32AntFlags;                              /* From ant.c */
 
 extern u32 G_u32AntApiCurrentMessageTimeStamp;                           /* From ant_api.c */
 extern AntApplicationMessageType G_eAntApiCurrentMessageClass;           /* From ant_api.c */
@@ -71,7 +71,7 @@ Variable names shall start with "UserApp1_<type>" and be declared as static.
 static fnCode_type UserApp1_pfStateMachine;               /*!< @brief The state machine function pointer */
 static u32 UserApp1_u32Timeout;                           /*!< @brief Timeout counter used across states */
 
-static  AntAssignChannelInfoType BoardTest_sChannelInfo; /* ANT channel configuration */
+static  AntAssignChannelInfoType sChannelInfo; /* ANT channel configuration */
 
 /**********************************************************************************************************************
 Function Definitions
@@ -102,45 +102,40 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
-	/* Start with all LEDs on */
-  LedOn(WHITE);
-  LedOn(PURPLE);
-  LedOn(BLUE);
-  LedOn(CYAN);
-  LedOn(GREEN);
-  LedOn(YELLOW);
-  LedOn(ORANGE);
-  LedOn(RED);
-  LedOn(LCD_BLUE);
-  LedOn(LCD_GREEN);
-  LedOn(LCD_RED);
+  AntAssignChannelInfoType sChannelInfo; /* ANT channel configuration */
 
-  /* Load the ANT setup parameters */
-  /* Configure the ANT radio */
-  BoardTest_sChannelInfo.AntChannel          = U8_ANT_CHANNEL_BOARDTEST;
-  BoardTest_sChannelInfo.AntChannelType      = U8_ANT_CHANNEL_TYPE_BOARDTEST;
-  BoardTest_sChannelInfo.AntChannelPeriodLo  = U8_ANT_CHANNEL_PERIOD_LO_BOARDTEST;
-  BoardTest_sChannelInfo.AntChannelPeriodHi  = U8_ANT_CHANNEL_PERIOD_HI_BOARDTEST;
+	if (AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED) {
+		/* Configure the ANT radio */
+  		sChannelInfo.AntChannel          = U8_ANT_CHANNEL_USERAPP;
+  		sChannelInfo.AntChannelType      = CHANNEL_TYPE_MASTER;
+  		sChannelInfo.AntChannelPeriodLo  = U8_ANT_CHANNEL_PERIOD_HI_DEFAULT;
+  		sChannelInfo.AntChannelPeriodHi  = U8_ANT_CHANNEL_PERIOD_LO_DEFAULT;
 
-  BoardTest_sChannelInfo.AntDeviceIdHi       = U8_ANT_DEVICEID_HI_BOARDTEST;
-  BoardTest_sChannelInfo.AntDeviceIdLo       = U8_ANT_DEVICEID_LO_BOARDTEST;
-  BoardTest_sChannelInfo.AntDeviceType       = U8_ANT_DEVICE_TYPE_BOARDTEST;
-  BoardTest_sChannelInfo.AntTransmissionType = U8_ANT_TRANSMISSION_TYPE_BOARDTEST;
+  		sChannelInfo.AntDeviceIdHi       = U8_ANT_DEVICE_HI_USERAPP;
+  		sChannelInfo.AntDeviceIdLo       = U8_ANT_DEVICE_LO_USERAPP;
+  		sChannelInfo.AntDeviceType       = U8_ANT_DEVICE_TYPE_DEFAULT;
+  		sChannelInfo.AntTransmissionType = U8_ANT_TRANSMISSION_TYPE_DEFAULT;
 
-  BoardTest_sChannelInfo.AntFrequency        = U8_ANT_FREQUENCY_BOARDTEST;
-  BoardTest_sChannelInfo.AntTxPower          = U8_ANT_TX_POWER_BOARDTEST;
+  		sChannelInfo.AntFrequency        = U8_ANT_FREQUENCY_DEFAULT;
+  		sChannelInfo.AntTxPower          = U8_ANT_TX_POWER_DEFAULT;
 
-  BoardTest_sChannelInfo.AntNetwork = U8_ANT_NETWORK_DEFAULT;
-  for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
-  {
-    BoardTest_sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
-  }
+  		sChannelInfo.AntNetwork = U8_ANT_NETWORK_DEFAULT;
+  		
+		for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++) {
+  			sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
+  		}
+
+  		/* Queue the channel assignment and go to wait state */
+  		AntAssignChannel(&sChannelInfo);
+	}
+
+	// test for decent initialization, otherwise set state to idle.
+	if ( 1 ) {
+		UserApp1_pfStateMachine = UserApp1SM_WaitAntReady;
+	} else {
+		UserApp1_pfStateMachine = UserApp1SM_Error;
+	}
   
-  /* Queue the channel assignment and go to wait state */
-  AntAssignChannel(&BoardTest_sChannelInfo);
-  UserApp1_u32Timeout = G_u32SystemTime1ms;
-  DebugPrintf("Board test task started\n\r");
-  UserApp1_pfStateMachine = UserApp1SM_SetupAnt;
 
 } /* end UserApp1Initialize() */
 
@@ -176,10 +171,33 @@ void UserApp1RunActiveState(void)
 State Machine Function Definitions
 **********************************************************************************************************************/
 /*-------------------------------------------------------------------------------------------------------------------*/
+//wait for ANT channel to be configured.
+static void UserApp1SM_WaitAntReady(void)
+{
+	if (AntRadioStatusChannel(U8_ANT_CHANNEL_USERAPP) == ANT_CONFIGURED) {
+		if (AntOpenChannelNumber(U8_ANT_CHANNEL_USERAPP)) {
+			UserApp1_pfStateMachine = UserApp1SM_WaitChannelOpen;
+		} else {
+			UserApp1_pfStateMachine = UserApp1SM_Error;
+		}
+	}
+} // end UserApp1SM_WaitAntReady()
+
+static void UserApp1SM_WaitChannelOpen(void) {
+	if (AntRadioStatusChannel(U8_ANT_CHANNEL_USERAPP) == ANT_OPEN) {
+		UserApp1_pfStateMachine = UserApp1SM_ChannelOpen;
+	}
+}
+
+
+//TODO: Add Add ChannelOpen() State
+
+
+#if 0
 static void UserApp1SM_SetupAnt(void)
 {
   /* Check to see if the channel assignment is successful */
-  if(AntRadioStatusChannel(U8_ANT_CHANNEL_BOARDTEST) == ANT_CONFIGURED)
+  if(AntRadioStatusChannel(U8_ANT_CHANNEL_DEFAULT) == ANT_CONFIGURED)
   {
     DebugPrintf("Board test ANT Master ready\n\r");
     DebugPrintf("Device ID: ");
@@ -450,7 +468,7 @@ static void UserApp1SM_Idle(void)
   }
 
 } /* end UserApp1SM_Idle() */
-
+#endif
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */

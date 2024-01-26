@@ -57,6 +57,18 @@ static void UserApp1SM_Error(void);
 Constants / Definitions
 **********************************************************************************************************************/
 /* BoardTest_u32Flags */
+
+#define U8_ANT_CHANNEL_USERAPP (u8)ANT_CHANNEL_0       /* Channel 0 – 7 */
+#define U8_ANT_DEVICE_LO_USERAPP (u8)0x7D              /* Low byte of two-byte Device # */
+#define U8_ANT_DEVICE_HI_USERAPP (u8)0x04              /* High byte of two-byte Device # */
+#define U8_ANT_DEVICE_TYPE_USERAPP (u8)1               /* 1 – 255 */
+#define U8_ANT_TRANSMISSION_TYPE_USERAPP (u8)1         /* 1-127 (MSB is pairing bit) */
+#define U8_ANT_CHANNEL_PERIOD_LO_USERAPP (u8)0x00      /* Low byte of two-byte channel period */
+#define U8_ANT_CHANNEL_PERIOD_HI_USERAPP (u8)0x20      /* High byte of two-byte channel period */
+#define U8_ANT_FREQUENCY_USERAPP (u8)50                /* 2400MHz + this number 0 – 99 */
+#define U8_ANT_TX_POWER_USERAPP RADIO_TX_POWER_4DBM    /* RADIO_TX_POWER_xxx */
+
+#if 0
 #define _LEDS_ON                                  (u32)0x000000001  /* Set when audio and ANT test is active */
 #define _AUDIO_ANT_ON                             (u32)0x000000008  /* Set when audio and ANT test is active */
 
@@ -89,7 +101,7 @@ THE STARTUP TEXT MESSAGE IN BoardTestSM_SetupAnt */
 /* EiE Board Test specific Device Types */
 #define	U8_DEVICE_TYPE_BOARDTEST		              (u8)0x60
 
-
+#endif //endif 0
 
 #endif /* __USER_APP1_H */
 
