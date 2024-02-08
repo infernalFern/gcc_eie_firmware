@@ -126,7 +126,7 @@ Includes
 
 
 /* Global status flags for SPI peripherals */
-#define BLADE_SPI_FLAGS             G_u32Spi0ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
+//#define BLADE_SPI_FLAGS             G_u32Spi0ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
 #define SD_SSP_FLAGS                G_u32Ssp1ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
 #define ANT_SSP_FLAGS               G_u32Ssp2ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
 
