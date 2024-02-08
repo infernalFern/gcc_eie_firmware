@@ -47,10 +47,13 @@ void UserApp1RunActiveState(void);
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
-static void UserApp1SM_SetupAnt(void);
 static void UserApp1SM_Idle(void);    
-static void UserApp1SM_Error(void);         
+static void UserApp1SM_Error(void);  
 
+static void UserApp1SM_WaitAntReady(void);
+static void UserApp1SM_WaitChannelOpen(void);
+static void UserApp1SM_ChannelOpen(void);
+static void UserApp1SM_WaitChannelClose(void);
 
 
 /**********************************************************************************************************************
@@ -67,6 +70,9 @@ Constants / Definitions
 #define U8_ANT_CHANNEL_PERIOD_HI_USERAPP (u8)0x20      /* High byte of two-byte channel period */
 #define U8_ANT_FREQUENCY_USERAPP (u8)50                /* 2400MHz + this number 0 – 99 */
 #define U8_ANT_TX_POWER_USERAPP RADIO_TX_POWER_4DBM    /* RADIO_TX_POWER_xxx */
+
+#define U32_TIMEOUT_OPEN_CHANNEL          (u32)2000 /* Allowed time in ms to open a channel */
+#define U32_TIMEOUT_CLOSE_CHANNEL         (u32)5000 /* Allowed time in ms to close a channel */
 
 #if 0
 #define _LEDS_ON                                  (u32)0x000000001  /* Set when audio and ANT test is active */

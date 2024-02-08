@@ -145,8 +145,16 @@ Constants / Definitions
 #define U8_ANT_NUM_CHANNELS               (u8)8                  /*!< @brief Maximum number of ANT channels in the system */
 #define U16_ANT_RX_BUFFER_SIZE            (u16)256               /*!< @brief ANT incoming data buffer size */
 
-#define U32_ANT_CONFIGURE_TIMEOUT_MS      (u32)2000              /*!< @brief Maximum time to send all channel configuration messages */
-#define U8_ANT_INFINITE_SEARCH_TIMEOUT    (u8)0xFF               /*!< @brief Value for Set Search Timeout for infinite timeout */
+//For ANT in Slave Mode:
+#define U8_ANT_SEARCH_TIMEOUT             U8_ANT_SEARCH_TIMEOUT_10S       /*!< @brief Value for search timeout loaded in AntAssignChannel */
+#define U8_ANT_SEARCH_TIMEOUT_10S         (u8)4                           /*!< @brief Value for Set Search Timeout 10s (4 x 2.5s) */
+#define U8_ANT_SEARCH_TIMEOUT_30S         (u8)12                          /*!< @brief Value for Set Search Timeout 30s (12 x 2.5s) */
+#define U8_ANT_SEARCH_TIMEOUT_INF         (u8)0xFF                        /*!< @brief Value for Set Search Timeout for infinite timeout */
+
+
+// For ANT in Master Mode:
+// #define U32_ANT_CONFIGURE_TIMEOUT_MS      (u32)2000              /*!< @brief Maximum time to send all channel configuration messages */
+// #define U8_ANT_INFINITE_SEARCH_TIMEOUT    (u8)0xFF               /*!< @brief Value for Set Search Timeout for infinite timeout */
 
 /*!@cond DOXYGEN_EXCLUDE */
 #define U32_ANT_RESET_WAIT_MS             (u32)100
