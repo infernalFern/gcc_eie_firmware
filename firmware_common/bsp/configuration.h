@@ -11,7 +11,7 @@ Bookmarks:
 ##### UART peripheral board-specific parameters
 $$$$$ SPI peripheral board-specific parameters
 %%%%% SSP peripheral board-specific parameters
-^^^^^ I�C peripheral board-specific parameters
+^^^^^ I²C peripheral board-specific parameters
 
 
 ***********************************************************************************************************************/
@@ -50,18 +50,12 @@ Includes
 #include "AT91SAM3U4.h"
 #include "exceptions.h"
 #include "interrupts.h"
-
-/* ignore some warnings specific to the CMSIS headers */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wimplicit-int"
 #include "core_cm3.h"
-#pragma GCC diagnostic pop
-
 #include "main.h"
 #include "typedefs.h"
 #include "utilities.h"
 
-/* EIEF1-PCB-01 specific header files */
+/* EIEF1_ASCII specific header files */
 #ifdef EIE_ASCII
 #include "eief1-pcb-01.h"
 #include "lcd_nhd-c0220biz.h"
@@ -96,6 +90,10 @@ Includes
 #include "sam3u_uart.h"
 #include "adc12.h"
 
+/* Common Blade header files */
+#include "blade_api.h"
+#include "blade_imu_lsm6dsl.h"
+
 /* Common application header files */
 #include "debug.h"
 #include "music.h"
@@ -126,7 +124,7 @@ Includes
 
 
 /* Global status flags for SPI peripherals */
-//#define BLADE_SPI_FLAGS             G_u32Spi0ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
+#define BLADE_SPI_FLAGS             G_u32Spi0ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
 #define SD_SSP_FLAGS                G_u32Ssp1ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
 #define ANT_SSP_FLAGS               G_u32Ssp2ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
 
@@ -1207,12 +1205,12 @@ or 2MHz, so no issues.
 
 /*! @endcond */
 /***********************************************************************************************************************
-^^^^^ I�C (TWI) peripheral board-specific parameters
+^^^^^ I²C (TWI) peripheral board-specific parameters
 ***********************************************************************************************************************/
 /*! @cond DOXYGEN_EXCLUDE */
 
 /*----------------------------------------------------------------------------------------------------------------------
-I�C Master mode for EiE development board (TWI0)
+I²C Master mode for EiE development board (TWI0)
 ASCII: LCD and Blade
 Dot Matrix: Blade and R01 EIE_DOTMATRIX accelerometer
 */
@@ -1348,4 +1346,3 @@ Dot Matrix: Blade and R01 EIE_DOTMATRIX accelerometer
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
-
